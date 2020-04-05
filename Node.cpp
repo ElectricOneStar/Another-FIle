@@ -10,6 +10,7 @@ Node::Node(){ // constructor
     right = NULL;
   left = NULL;
   //pdata = NULL;
+  parent = NULL;
   (*color) = 0;
 }
 Node::~Node(){ // destructor
@@ -17,7 +18,7 @@ Node::~Node(){ // destructor
   right = NULL;
    left = NULL;
   data = NULL;
-
+  parent = NULL;
   color = NULL;
 }
 void Node::setRight(Node* inputRight){ // setter Right
@@ -43,4 +44,7 @@ int* Node::getColor(){
 }
 void Node::setColor(int* c){
   (*color) = (*c);
+}
+void Node::setParent(Node* newParent) {
+  parent = newParent;
 }

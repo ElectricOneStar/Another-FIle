@@ -20,7 +20,10 @@ class Node{
   Node* getLeft();
   int* getData();
   int* getColor();
+    Node* getParent();
+    void setParent(Node* newParent);
 private: // right left and data storage
+  Node* parent;
   Node* right;
   Node* left;
   int* data = new int;
