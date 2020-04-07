@@ -14,7 +14,11 @@ void Print(Node* header, int length, int count, int i);
 void Search(Node* header, int* searchData, bool* exists);
 void maxSize(char* input, int* size);
 Node* getRightMost(Node* header);
-
+void rotateLeft(Node *&header, Node *&pointer);
+void rotateRight(Node *&header, Node *&pointer);
+void fixViolation(Node* &header, Node* &pointer);
+void balance(Node* &head, Node* &curr);
+void balance2(Node* &head, Node* &curr);
 int main(){ // initialization of variables
   //HANDLE hStdOut = GetStdHandle(STD_OUTPUT_HANDLE);
   //SetConsoleTextAttribute(hStdOut, FOREGROUND_RED | BACKGROUND_BLUE | BACKGROUND_GREEN | BACKGROUND_RED);
@@ -96,8 +100,11 @@ int main(){ // initialization of variables
     Node* two = new Node; // creates the new node
     (*two).setData(Parce(additionInput, index, counterOne, wordCounter, parced));
     //cout << "added data" << (*(*two).getData()) << endl;
+    //Node*
     Add(header, two);
     //  cout << (*(*getParent(header, two, Parent)).getData()) << endl;
+    //fixViolation(header, two);
+    // balance2(header, two);
     cout << "there" << endl;
     // FixTree(header, two, getUncle(header, two, Uncle), getGrandParent(header, two, GrandParent), getParent(header, two, Parent));
     cout << "Added" << endl;
@@ -181,11 +188,11 @@ void BuildTree(char* input, int* index, int* counterOne, int* wordCounter, int* 
   // cout << (*size) << endl;
   // Node* header = new Node;
   int* RED = new int;
-  (*RED) = 0;
+  (*RED) = 1;
   int* BLACK = new int;
-  (*BLACK) = 1;
+  (*BLACK) = 0;
   (*header).setData(Parce(input, index, counterOne, wordCounter, parced)); // creates the head
-  (*header).setColor(BLACK);
+  (*header).setColor((*BLACK));
   (*index)++; 
   //cout << "head data" << (*(*header).getData()) << endl;
   do{
@@ -195,6 +202,7 @@ void BuildTree(char* input, int* index, int* counterOne, int* wordCounter, int* 
     //(*one).setColor(BLACK);
     //cout << "data" << (*(*one).getData()) << endl;
     Add(header, one); // adds the new node
+    // fixViolation(header, one);
     (*index)++;
   }
   while((*index) != (*size)+1); // continues to do this until all the numbers from input are put into the tree
@@ -234,7 +242,7 @@ void Print(Node* header, int length, int count, int i){ // this funciton prints 
   }
   //textcolor(RED);
   //system("Color 7C");
-  if((*(*header).getColor()) == 0){
+  if((*header).getColor() == 1){
     cout << (*(*header).getData()) << "R" << endl;
   }
   else{
@@ -273,3 +281,299 @@ void maxSize(char* input, int* size){ // this function gets the size of the tree
     }
   }
 }
+/*
+void rotateLeft(Node *&header, Node *&pointer)
+{
+  cout << "RR" << endl;
+  Node *pointer_right = pointer->getRight();
+  
+    pointer->setRight(pointer_right->getLeft());
+    
+    if (pointer->getRight() != NULL)
+      
+      pointer->getRight()->setParent(pointer);
+  
+    pointer_right->setParent(pointer->getParent());
+    
+    if (pointer->getParent() == NULL)
+        header = pointer_right;
+  
+    else if (pointer == pointer->getParent()->getLeft())
+      pointer->getParent()->setLeft(pointer_right);
+  
+    else
+      pointer->getParent()->setRight(pointer_right);
+  
+    pointer_right->setLeft(pointer);
+    pointer->setParent(pointer_right);
+  
+}
+void rotateRight(Node *&header, Node *&pointer)
+{
+  cout << "RR" << endl;
+    Node *pointer_left = pointer->getLeft();
+  
+    pointer->setLeft(pointer_left->getRight());
+  
+    if (pointer->getLeft() != NULL)
+      pointer->getLeft()->setParent(pointer);
+  
+    pointer_left->setParent( pointer->getParent());
+  
+    if (pointer->getParent() == NULL)
+        header = pointer_left;
+  
+    else if (pointer == pointer->getParent()->getLeft())
+      pointer->getParent()->setLeft(pointer_left);
+  
+    else
+      pointer->getParent()->setRight(pointer_left);
+  
+    pointer_left->setRight( pointer);
+    pointer->setParent( pointer_left);
+}
+
+void fixViolation(Node* &header, Node* &pointer)
+{
+  cout << "h1" << endl;
+    Node* parent_pointer = NULL;
+    Node* grand_parent_pointer = NULL;
+    cout << "h2" << endl;
+    while ((pointer != header) && (pointer->getColor() != 0) &&
+           ((pointer->getParent())->getColor() == 1))
+      {
+      cout << "h21" << endl;
+        parent_pointer = pointer->getParent();
+        grand_parent_pointer = pointer->getParent()->getParent();
+	cout << "h2" << endl;
+        /*  Case : A
+            Parent of pointer is left child of Grand-parent of pointer */
+/*
+if (parent_pointer == grand_parent_pointer->getLeft())
+        {
+	  cout << "z1" << endl;
+  
+            Node *uncle_pointer = grand_parent_pointer->getRight();
+	    cout << "h3" << endl;
+  
+            /* Case : 1
+               The uncle of pointer is also red
+               Only Recoloring required */
+	/*
+	if (uncle_pointer != NULL && uncle_pointer->getColor() != 0)
+            {
+	      cout << "z2" << endl;
+	      grand_parent_pointer->setColor(0);
+	      parent_pointer->setColor(1);
+	      uncle_pointer->setColor(1);
+                pointer = grand_parent_pointer;
+            }
+  
+            else
+            {
+	      cout << "z3" << endl;
+	      cout << "h4" << endl;
+                /* Case : 2
+                   pointer is right child of its parent
+                   Left-rotation required */
+	/*
+	if (pointer == parent_pointer->getRight())
+                {
+		  cout << "z4" << endl;
+                    rotateLeft(header, parent_pointer);
+                    pointer = parent_pointer;
+                    parent_pointer = pointer->getParent();
+                }
+		cout << "z5" << endl;
+  
+                /* Case : 3
+                   pointer is left child of its parent
+                   Right-rotation required */
+	/*
+	rotateRight(header, grand_parent_pointer);
+		// swap(parent_pointer->getColor(), grand_parent_pointer->getColor());
+		cout << "h5" << endl;
+	      int parentColor = parent_pointer->getColor();
+	parent_pointer->setColor(grand_parent_pointer->getColor());
+	grand_parent_pointer->setColor(parentColor);
+                pointer = parent_pointer;
+            }
+        }
+ //cout << "h6" << endl;
+        /* Case : B
+           Parent of pointer is right child of Grand-parent of pointer */
+	/*
+	else
+        {
+            Node *uncle_pointer = grand_parent_pointer->getLeft();
+  cout << "h7" << endl;
+            /*  Case : 1
+                The uncle of pointer is also red
+                Only Recoloring required */
+	/*
+	if ((uncle_pointer != NULL) && (uncle_pointer->getColor() != 0))
+            {
+	      grand_parent_pointer->setColor(0);
+	      parent_pointer->setColor(1);
+                uncle_pointer->setColor(1);
+                pointer = grand_parent_pointer;
+            }
+            else
+            {
+	      cout << "h8" << endl;
+                /* Case : 2
+                   pointer is left child of its parent
+                   Right-rotation required */
+	/*
+	if (pointer == parent_pointer->getLeft())
+                {
+                    rotateRight(header, parent_pointer);
+                    pointer = parent_pointer;
+                    parent_pointer = pointer->getParent();
+                }
+		cout << "h9" << endl;
+                /* Case : 3
+                   pointer is right child of its parent
+                   Left-rotation required */
+	/*      rotateLeft(header, grand_parent_pointer);
+		// swap(parent_pointer->getColor(), grand_parent_pointer->getColor());
+		int ParentC2 = parent_pointer->getColor();
+	parent_pointer->setColor(grand_parent_pointer->getColor());
+	grand_parent_pointer->setColor(ParentC2);
+                pointer = parent_pointer;
+            }
+        }
+    }
+  
+    header->setColor(0);
+}
+void balance(Node* &head, Node* &curr) {
+  Node* parent = NULL;
+  Node* grandparent = NULL;
+  while ((curr != head) && (curr->getColor() != 1) &&
+	 ((curr->getParent())->getColor() == 0)) {
+    parent = curr->getParent();
+    grandparent = parent->getParent();
+    //Case A: parent = left child of grandparent
+    if (parent == grandparent->getLeft()) {
+      Node* uncle = grandparent->getRight();
+      //Case 1: uncle = red, then only recolor
+      if (uncle != NULL && uncle->getColor() != 1) {
+	grandparent->setColor(0);//red
+	parent->setColor(1);//black
+	uncle->setColor(1);//black
+	curr = grandparent;
+      }
+      else {
+	//Case 2: curr = right child of parent, then rotate left
+	if (curr == parent->getRight()) {
+	  rotateLeft(head, parent);
+	  curr = parent;
+	  parent =  curr->getParent();
+	}
+	//Case 3: curr - left child of parent, then rotate right
+	rotateRight(head, grandparent);
+	//swap colors of parent and grandparent
+	int tempC = parent->getColor();
+	parent->setColor(grandparent->getColor());
+	grandparent->setColor(tempC);
+	curr = parent;
+      }
+    }
+    //Case B: parent = right child of grandparent
+    else {
+      Node* uncle = grandparent->getLeft();
+      //Case 1: uncle = red, then onyl recolor
+      if (uncle != NULL && uncle->getColor() != 1) {
+	grandparent->setColor(0);//red
+	parent->setColor(1);//black
+	uncle->setColor(1);//black
+	curr = grandparent;
+      }
+      else {
+	//Case 2: curr = left child of parent, then rotate right
+	if (curr == parent->getLeft()) {
+	  rotateRight(head, parent);
+	  curr = parent;
+	  parent = curr->getParent();
+	}
+	//Case 3: curr = right child of parent, then rotate left
+	rotateLeft(head, grandparent);
+	//swap color of parent and grandparent
+	int tempC = parent->getColor();
+	parent->setColor(grandparent->getColor());
+	grandparent->setColor(tempC);
+	curr = parent;
+      }
+    }
+  }
+  head->setColor(1);
+    }
+void balance2(Node* &head, Node* &curr) {
+  cout << "b2" << endl;
+  Node* parent = NULL;
+  Node* grandparent = NULL;
+  cout << "h1" << endl;
+  while ((curr != head) && (curr->getColor() != 0) &&
+	 ((curr->getParent())->getColor() == 1)) {
+      cout << "h2" << endl;
+    parent = curr->getParent();
+    grandparent = parent->getParent();
+    //Case A: parent = left child of grandparent
+    if (parent == grandparent->getLeft()) {
+      Node* uncle = grandparent->getRight();
+      //Case 1: uncle = red, then only recolor
+      if (uncle != NULL && uncle->getColor() != 0) {
+	grandparent->setColor(1);//red
+	parent->setColor(0);//black
+	uncle->setColor(0);//black
+	curr = grandparent;
+      }
+      else {
+	//Case 2: curr = right child of parent, then rotate left
+	if (curr == parent->getRight()) {
+	  rotateLeft(head, parent);
+	  curr = parent;
+	  parent =  curr->getParent();
+	}
+	//Case 3: curr - left child of parent, then rotate right
+	rotateRight(head, grandparent);
+	//swap colors of parent and grandparent
+	int tempC = parent->getColor();
+	parent->setColor(grandparent->getColor());
+	grandparent->setColor(tempC);
+	curr = parent;
+      }
+    }
+    //Case B: parent = right child of grandparent
+    else {
+      Node* uncle = grandparent->getLeft();
+      //Case 1: uncle = red, then onyl recolor
+      if (uncle != NULL && uncle->getColor() != 0) {
+	grandparent->setColor(1);//red
+	parent->setColor(0);//black
+	uncle->setColor(0);//black
+	curr = grandparent;
+      }
+      else {
+	//Case 2: curr = left child of parent, then rotate right
+	if (curr == parent->getLeft()) {
+	  rotateRight(head, parent);
+	  curr = parent;
+	  parent = curr->getParent();
+	}
+	//Case 3: curr = right child of parent, then rotate left
+	rotateLeft(head, grandparent);
+	//swap color of parent and grandparent
+	int tempC = parent->getColor();
+	parent->setColor(grandparent->getColor());
+	grandparent->setColor(tempC);
+	curr = parent;
+      }
+    }
+  }
+  cout << "here" << endl;
+  head->setColor(0);
+}
+
+*/

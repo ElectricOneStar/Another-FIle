@@ -15,11 +15,11 @@ class Node{
   void setRight(Node* inputRight); // setters
   void setLeft(Node* inputLeft);
   void setData(int* inputData);
-  void setColor(int* c);
+  void setColor(int c);
   Node* getRight(); // getters
   Node* getLeft();
   int* getData();
-  int* getColor();
+  int getColor();
     Node* getParent();
     void setParent(Node* newParent);
 private: // right left and data storage
@@ -27,6 +27,7 @@ private: // right left and data storage
   Node* right;
   Node* left;
   int* data = new int;
-  int* color = new int;
+  int color;
+  
 };
 #endif
